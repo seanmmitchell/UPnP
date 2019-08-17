@@ -65,32 +65,50 @@ def AddPortMapping(device, RemoteHost, ExternalPort, Protocol, InternalHost, Int
             Out(OutSev.Critical, "Failed UPnP Port Mapping | RemoteHostOnlySupportsWildcard - Leave empty remote host.")
         
 
+def Dump(obj):
+    Out(OutSev.Debug, "Dumping Obj: " + str(obj))
+    ## Methods
+    object_methods = [method_name for method_name in dir(obj)
+        if callable(getattr(obj, method_name))]
+    obj_meth_str = ""
+    for method in object_methods:
+        obj_meth_str += (method + " ")
+    Out(OutSev.Debug, "\tMethods:" + obj_meth_str)
+    ## Attributes
+    object_attr = [attr for attr in dir(obj)
+        if not callable(getattr(obj, attr))]
+    object_attr_str = ""
+    for attr in object_attr:
+        object_attr_str += (attr + " ")
+    Out(OutSev.Debug, "\tAttributes:" + object_attr_str)
+
 def DeviceOutput(device):
-    print(" -[[ GENERAL ]]-\r\nDevice Name: %s\r\nDevice Location: %s\r\nDevice Maker & Model: %s | %s\r\nDevice Description: %s" % (device.friendly_name, device.device_name, device.manufacturer, device.model_name, device.model_description))
+    Out(OutSev.Debug, "Device Name: %s" % (device.friendly_name))
+    Out(OutSev.Debug, "\tGeneral:")
+    Out(OutSev.Debug, "\t\tDevice Location: %s" % (device.device_name))
+    Out(OutSev.Debug, "\t\tDevice Maker & Model: %s | %s" % (device.manufacturer, device.model_name))
+    Out(OutSev.Debug, "\t\tDevice Description: %s" % (device.model_description))
+    Dump(device)
     if(hasattr(device, 'WANIPConn1')):
-        print(" -[[ WANIPConn1 ]]-")
+        Out(OutSev.Debug, "\tWANIPConn1:")
         NATCapable = device.WANIPConn1.GetNATRSIPStatus()
-        print("Device NAT Enabled: %s" % (NATCapable["NewNATEnabled"]))
-        print("Device Public IP: %s" % (device.WANIPConn1.GetExternalIPAddress()["NewExternalIPAddress"]))
-    print(" -[[ SERVICES ]]-")
+        Out(OutSev.Debug, "\t\tDevice NAT Enabled: %s" % (NATCapable["NewNATEnabled"]))
+        Out(OutSev.Debug, "\t\tDevice Public IP: %s" % (device.WANIPConn1.GetExternalIPAddress()["NewExternalIPAddress"]))
+    Out(OutSev.Debug, "\tSERVICES:")
     if(hasattr(device, "Layer3Forwarding1")):
-        print("Layer 3 Forwarding: True")
+        Out(OutSev.Debug, "\t\tLayer 3 Forwarding: True")
 
-#parse input
-
-
+# Discover
 Out(OutSev.Info, "Starting UPnP discovery...")
 upnpclient.util.logging.disable()
 devices = upnpclient.discover(2)
+for device in devices:
+    DeviceOutput(device)
 Out(OutSev.Info, "UPnP Discovery Complete...")
 
-### DEBUG
-#print("-----------------------------------------------------------")
-#for device in devices:
-#    #print(device)
-#    DeviceOutput(device)
-#    print("-----------------------------------------------------------")
+#parse input
 
+#exec
 for device in devices:
     if(hasattr(device, "Layer3Forwarding1")):
         AddPortMapping(device, "", 10003, "UDP", "192.168.1.15", 10003, "TEST upnpclient in Py3", NewEnabled="1", Duration=0)
