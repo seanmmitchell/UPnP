@@ -1,5 +1,6 @@
 from colorama import Fore, Style
 from enum import Enum
+from sys import argv, exit, stdout
 from threading import Lock
 import upnpclient
 
@@ -33,6 +34,7 @@ def Out(Sev, Message, File=False):
         else:
             print(Sev + " - " + Message)    
 
+        stdout.flush()
         LockOutput.release()
         return
     else:
@@ -98,6 +100,66 @@ def DeviceOutput(device):
     if(hasattr(device, "Layer3Forwarding1")):
         Out(OutSev.Debug, "\t\tLayer 3 Forwarding: True")
 
+
+# usage
+def usage ():
+    print('''USAGE:\n\nUPnP.py\n
+Gives a CLI interface for easy UPnP management.\n\n
+\t--log \t\t Sets a max log level for the application. 0 .. 4 (Critical .. Debug)
+\tmap ExternalPort Protocol InternalHost InternalPort Description \t\t Creates a port mapping''')
+
+
+# parse input
+
+# general data
+newOutputLevel = OutputLevel
+
+# port map operation
+Map = ""
+ExternalPort = ""
+Protocol = ""
+InternalHost = ""
+InternalPort = ""
+Description = ""
+
+for x in range(len(argv)):
+    arg = argv[x]
+    if arg == "--log":
+        try:
+            newOutputLevel = argv[x+1]
+        except IndexError as ie:
+            Out(OutSev.Critical, "No log level given.")
+            usage()
+            exit(0)
+
+        try:
+            newOutputLevel = int(newOutputLevel)
+
+            if newOutputLevel > 4 or newOutputLevel < 0:
+                Out(OutSev.Critical, "Invalid new log level given.")
+                usage()
+                exit(0)
+
+            Out(OutSev.Info, "Setting the new output level to: %s" % (OutSev(newOutputLevel).name))
+            #OutputLevel = newOutputLevel SET LATER, NOT HERE
+        except Exception as e:
+            Out(OutSev.Critical, "Failed to parse new log level.")
+            usage()
+            exit(0)
+    elif arg == "map":
+        try:
+            Map = "true"
+            ExternalPort = int(argv[x+1])
+            Protocol = argv[x+2]
+            InternalHost = argv[x+3]
+            InternalPort = int(argv[x+4])
+            Description = argv[x+5]
+        except:
+            Map = "false"
+        
+# now set
+OutputLevel = newOutputLevel
+
 # Discover
 Out(OutSev.Info, "Starting UPnP discovery...")
 upnpclient.util.logging.disable()
@@ -106,9 +168,9 @@ for device in devices:
     DeviceOutput(device)
 Out(OutSev.Info, "UPnP Discovery Complete...")
 
-#parse input
-
 #exec
-for device in devices:
-    if(hasattr(device, "Layer3Forwarding1")):
-        AddPortMapping(device, "", 10003, "UDP", "192.168.1.15", 10003, "TEST upnpclient in Py3", NewEnabled="1", Duration=0)
+
+if Map == "true":
+    for device in devices:
+        if(hasattr(device, "Layer3Forwarding1")):
+            AddPortMapping(device, "", ExternalPort, Protocol, InternalHost, InternalPort, Description, NewEnabled="1", Duration=0)
