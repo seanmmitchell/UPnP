@@ -3,6 +3,7 @@ from enum import Enum
 from sys import argv, exit, stdout
 from threading import Lock
 import upnpclient
+import socket
 
 ## Log Levels
 OutputLevel = 4
@@ -106,7 +107,7 @@ def usage ():
     print('''USAGE:\n\nUPnP.py\n
 Gives a CLI interface for easy UPnP management.\n\n
 \t--log \t\t Sets a max log level for the application. 0 .. 4 (Critical .. Debug)
-\tmap ExternalPort Protocol InternalHost InternalPort Description \t\t Creates a port mapping''')
+\tmap ExternalPort Protocol InternalHost InternalPort Description \t\t Creates a port mapping. Leave InternalHost "" to autofill.''')
 
 
 # parse input
@@ -171,6 +172,9 @@ Out(OutSev.Info, "UPnP Discovery Complete...")
 #exec
 
 if Map == "true":
+    if InternalHost == "":
+      hostname = socket.gethostname()
+      InternalHost = socket.gethostbyname(hostname)
     for device in devices:
         if(hasattr(device, "Layer3Forwarding1")):
             AddPortMapping(device, "", ExternalPort, Protocol, InternalHost, InternalPort, Description, NewEnabled="1", Duration=0)
