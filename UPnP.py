@@ -163,7 +163,7 @@ OutputLevel = newOutputLevel
 
 # Discover
 Out(OutSev.Info, "Starting UPnP discovery...")
-upnpclient.util.logging.disable()
+upnpclient.util.logging.disable(100)
 devices = upnpclient.discover(2)
 for device in devices:
     DeviceOutput(device)
