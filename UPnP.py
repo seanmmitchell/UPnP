@@ -102,17 +102,14 @@ def DeviceOutput(device):
         Out(OutSev.Debug, "\t\tLayer 3 Forwarding: True")
 
 
-# usage
+# Usage read out
 def usage ():
     print('''USAGE:\n\nUPnP.py\n
 Gives a CLI interface for easy UPnP management.\n\n
-\t--log \t\t Sets a max log level for the application. 0 .. 4 (Critical .. Debug)
-\tmap ExternalPort Protocol InternalHost InternalPort Description \t\t Creates a port mapping. Leave InternalHost "" to autofill.''')
+\t--log (Critical (0) Error (1) Warning (2) Info (3) Debug (4))\t\t Sets a max log level for the application.
+\tmap\tExternalPort\tProtocol\tInternalHost\tInternalPort\tDescription \t\t Creates a port mapping. Leave InternalHost "" to autofill.''')
 
-
-# parse input
-
-# general data
+# Temp Set New Output Level to Default Output Level
 newOutputLevel = OutputLevel
 
 # port map operation
@@ -157,6 +154,9 @@ for x in range(len(argv)):
             Description = argv[x+5]
         except:
             Map = "false"
+    elif (arg == "-h" or arg == "--h") or (arg == "-help" or arg == "--help"):
+        usage()
+        quit(0)
         
 # now set
 OutputLevel = newOutputLevel
