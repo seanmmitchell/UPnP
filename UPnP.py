@@ -6,7 +6,7 @@ import upnpclient
 import socket
 
 ## Log Levels
-OutputLevel = 4
+OutputLevel = 3
 class OutSev(Enum):
     Critical = 0
     Error = 1
