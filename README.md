@@ -4,6 +4,7 @@
 <h1>Usage</h1>
 
 ```python3 UPnP/UPnP.py map (EXTERNAL PORT) (TCP OR UDP) (INTERNAL IP) (INTERNAL PORT) (DESCRIPTION - USE "QUOTATIONS")```
+
 <b>EX:</b>
 
 ```python3 UPnP/UPnP.py map 3478 UDP 192.168.1.5 3478 "STUN"```
