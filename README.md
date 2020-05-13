@@ -2,9 +2,11 @@
 <p>A Python based UPnP port opener.</p>
 <br>
 <h1>Usage</h1>
-<p>python3.7 UPnP/UPnP.py map (EXTERNAL PORT) (TCP OR UDP) (INTERNAL IP) (INTERNAL PORT) (DESCRIPTION - USE "QUOTATIONS")</p>
+
+```python3 UPnP/UPnP.py map (EXTERNAL PORT) (TCP OR UDP) (INTERNAL IP) (INTERNAL PORT) (DESCRIPTION - USE "QUOTATIONS")```
 <b>EX:</b>
-<p>python3.7 UPnP/UPnP.py map 3478 UDP 192.168.1.5 3478 "STUN"</p>
+
+```python3 UPnP/UPnP.py map 3478 UDP 192.168.1.5 3478 "STUN"```
 <br>
 <h1>Current project status is...</h1>
 <h3>Open</h3>
