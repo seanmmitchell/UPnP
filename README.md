@@ -10,8 +10,8 @@
 ```python3 UPnP/UPnP.py map 3478 UDP 192.168.1.5 3478 "STUN"```
 <br>
 <h1>Current project status is...</h1>
-<h3>Open</h3>
-<p>I will continue updating it till I am happy with it!</p>
+<h3>Closed</h3>
+<p>Below are features I believe this application could use, but I do not have time to implement.</p>
 <h3>Tasks</h3>
 <ul>
 <li>Improve error handling and parsing system</li>
